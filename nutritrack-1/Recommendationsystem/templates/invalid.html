@@ -1,0 +1,16 @@
+<!-- templates/invalid.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Error</title>
+</head>
+<body>
+    <h1>Login Error</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% else %}
+        <p>Invalid credentials. Please try again.</p>
+    {% endif %}
+    <a href="{% url 'login' %}">Try again</a>
+</body>
+</html>

@@ -1,0 +1,969 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>NutriTrack - Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link href="{% static '/img/favicon.ico' %}" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{% static '/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static '/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static '/css/style.css' %}" rel="stylesheet">
+    <style>
+        .profile-edit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .profile-edit-btn a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-edit-btn a:hover {
+            background: #3e8e41;
+            transform: scale(1.05);
+        }
+
+        .side-by-side-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .side-by-side-section {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .calories-tracker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 20px 0;
+        }
+
+        .progress-circle svg {
+            transform: rotate(90deg);
+        }
+
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+
+        .progress-circle circle:first-child {
+            stroke: #e6e6e6;
+        }
+
+        .progress-circle circle:last-child {
+            stroke: #4CAF50;
+            stroke-dasharray: 289;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-circle .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .calories-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .calories-box {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            width: 48%;
+        }
+
+        .consumed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .remaining {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .calories-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1050;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            display: none;
+        }
+        
+        .calories-alert h3 {
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        
+        .calories-alert p {
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .calories-alert button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .calories-alert button:hover {
+            background-color: #bb2d3b;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
+        }
+
+        .recommendations-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recommendation-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recommendation-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+        
+        .recommendation-info {
+            flex: 1;
+        }
+        
+        .recommendation-info h5 {
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
+        .nutrient-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .calories-tag {
+            background-color: #ffe0e3;
+            color: #d63384;
+        }
+        
+        .protein-tag {
+            background-color: #e0f7fa;
+            color: #0097a7;
+        }
+        
+        .carbs-tag {
+            background-color: #fff8e1;
+            color: #ffa000;
+        }
+        
+        .recommendation-reason {
+            margin-top: 10px;
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .consumption-history {
+            margin-top: 40px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .history-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .history-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            .side-by-side-container {
+                flex-direction: column;
+            }
+            .side-by-side-section {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+            <a href="#" class="navbar-brand p-0">
+                <h1 class="m-0">NutriTrack – RTFMS</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav mx-auto py-0">
+                    <a href="/dashboard" class="nav-item nav-link active">Dashboard</a>
+                    <a href="/logout" class="nav-item nav-link">Logout</a>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar End -->
+
+        <!-- Main Content Section -->
+        <div class="container-xxl py-5">
+            <div class="container py-5 px-lg-5">
+                <div class="side-by-side-container">
+                    <!-- User Info Section -->
+                    <div class="side-by-side-section wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="text-center">
+                            <h5 class="text-primary-gradient fw-medium">Your Profile</h5>
+                            <h1 class="mb-5">User Information</h1>
+                        </div>
+                        
+                        <div class="user-info-header">
+                            <h2>Welcome, {{ user_basic_info.name }}!</h2>
+                            <p>Logged in as: {{ user_basic_info.email }}</p>
+                        </div>
+                        
+                        <div class="bg-light rounded p-5 shadow position-relative">
+                            <!-- Edit Profile Button -->
+                            <div class="profile-edit-btn">
+                                <a href="{% url 'edit_profile' %}" title="Edit Profile">
+                                    <i class="fas fa-user-edit"></i>
+                                    Edit Profile
+                                </a>
+                            </div>
+                            
+                            
+                            {% if user_info %}
+                                <p><strong>Age:</strong> {{ user_info.age|default:"Not set" }}</p>
+                                <p><strong>Height:</strong> {{ user_info.height|default:"Not set" }} cm</p>
+                                <p><strong>Weight:</strong> {{ user_info.weight|default:"Not set" }} kg</p>
+                                <p><strong>Gender:</strong> {{ user_info.gender|default:"Not set"|title }}</p>
+                                <p><strong>Activity Level:</strong> {{ user_info.activity|default:"Not set"|title }}</p>
+                                <h4 class="mt-4 text-primary">
+                                    <strong>Daily Calorie Intake:</strong> 
+                                    <span id="dailyCalories">{{ user_info.daily_calories|default:"0" }}</span> kcal
+                                </h4>
+                            {% else %}
+                                <p class="text-danger">No user information found. Please update your profile.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Calories Tracker Section -->
+                    <div class="side-by-side-section wow fadeInUp" data-wow-delay="0.2s">
+                        <div class="text-center">
+                            <h5 class="text-primary-gradient fw-medium">Calories</h5>
+                            <h1 class="mb-5">Daily Progress</h1>
+                        </div>
+                        <div class="calories-tracker bg-light rounded shadow">
+                            <div class="progress-circle">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45"></circle>
+                                    <circle cx="50" cy="50" r="45" id="progressCircle"></circle>
+                                </svg>
+                                <div class="progress-text">
+                                    <span id="progressPercent">0</span>%
+                                </div>
+                            </div>
+                            <div class="calories-display">
+                                <div class="calories-box consumed">
+                                    <h5>Consumed</h5>
+                                    <h3 id="consumedCalories">0</h3>
+                                    <p>kcal</p>
+                                </div>
+                                <div class="calories-box remaining">
+                                    <h5>Remaining</h5>
+                                    <h3 id="remainingCalories">{{ user_info.daily_calories|default:"0" }}</h3>
+                                    <p>kcal</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Image Section -->
+                    <div class="side-by-side-section wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="text-center">
+                            <h5 class="text-primary-gradient fw-medium">Upload</h5>
+                            <h1 class="mb-5">Upload Food Image</h1>
+                        </div>
+                        <div class="bg-light rounded p-5 shadow text-center">
+                            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <input class="form-control" type="file" name="image" id="foodImage" accept="image/*" required>
+                                </div>
+                                <button class="btn btn-primary-gradient px-4 py-2 rounded-pill" type="submit">Upload Image</button>
+                            </form>
+
+                            <div id="uploadedImage" class="mt-4"></div>
+
+                            <div id="predictionBox" class="mt-4" style="display: none;">
+                                <h5 class="mt-3 text-success" id="foodItem"></h5>
+                                <p id="quantity"></p>
+                                <p id="calories"></p>
+                                <p id="protein"></p>
+                                <p id="carbs"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food Recommendations Section - Initially hidden -->
+                <div id="recommendationsSection" class="wow fadeInUp" data-wow-delay="0.4s" style="display: none;">
+                    <div class="text-center mt-5">
+                        <h5 class="text-primary-gradient fw-medium">Smart Suggestions</h5>
+                        <h1 class="mb-4">Food Recommendations</h1>
+                        <p class="mb-4">Based on your remaining calories and nutritional needs, here are some recommendations:</p>
+                    </div>
+                    <div id="recommendationsContainer" class="recommendations-section">
+                        <!-- Recommendations will be populated here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Consumption History Section -->
+                <div class="consumption-history wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="history-title">
+                        <h5 class="text-primary-gradient fw-medium">History</h5>
+                        <h3>Today's Consumption</h3>
+                    </div>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Quantity</th>
+                                <th>Calories</th>
+                                <th>Protein</th>
+                                <th>Carbs</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consumptionHistory">
+                            <!-- History items will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5 text-center">
+                <p class="mb-0">&copy; 2025 Calories Tracker. All rights reserved.</p>
+            </div>
+        </div>
+
+        <!-- Calories Alert Popup -->
+        <div class="overlay" id="caloriesOverlay"></div>
+        <div class="calories-alert" id="caloriesAlert">
+            <h3>Daily Calorie Limit Reached!</h3>
+            <p>You have reached your daily calorie intake goal. Consider maintaining your intake for the rest of the day.</p>
+            <button onclick="closeCaloriesAlert()">OK, I Understand</button>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static '/lib/wow/wow.min.js' %}"></script>
+    <script src="{% static '/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static '/lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static '/lib/counterup/counterup.min.js' %}"></script>
+    <script src="{% static '/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static '/js/main.js' %}"></script>
+
+    <!-- Custom JS -->
+    <script>
+    // Helper function to get user-specific storage key
+    function getUserStorageKey(keySuffix) {
+        // Use the user's email as part of the key (from Django template)
+        const userEmail = "{{ user_basic_info.email|default:'default' }}";
+        return `nutritrack_${userEmail}_${keySuffix}`;
+    }
+
+    // Initialize variables
+    let dailyCalories = parseFloat(document.getElementById("dailyCalories").textContent) || 0;
+    let consumedCalories = 0;
+    let remainingCalories = dailyCalories;
+    let alertShown = false;
+    let lastEatenFood = "";
+    let consumptionHistory = [];
+    
+    // Sample food nutrition dataset with real image paths
+    const foodNutritionData = [
+        { 
+            name: "Apple", 
+            calories: 95, 
+            protein: 0.5, 
+            carbs: 25, 
+            category: "fruit",
+            image: "{% static '/img/foods/apple.jpg' %}" 
+        },
+        { 
+            name: "Banana", 
+            calories: 105, 
+            protein: 1.3, 
+            carbs: 27, 
+            category: "fruit",
+            image: "{% static '/img/foods/banana.jpg' %}" 
+        },
+        { 
+            name: "Chicken Breast", 
+            calories: 165, 
+            protein: 31, 
+            carbs: 0, 
+            category: "protein",
+            image: "{% static '/img/foods/chicken-breast.jpg' %}" 
+        },
+        { 
+            name: "Brown Rice (1 cup)", 
+            calories: 216, 
+            protein: 5, 
+            carbs: 45, 
+            category: "grain",
+            image: "{% static '/img/foods/brown-rice.jpg' %}" 
+        },
+        { 
+            name: "Eggs (2)", 
+            calories: 140, 
+            protein: 12, 
+            carbs: 0, 
+            category: "protein",
+            image: "{% static '/img/foods/eggs.jpg' %}" 
+        },
+        { 
+            name: "Almonds (1 oz)", 
+            calories: 160, 
+            protein: 6, 
+            carbs: 6, 
+            category: "nuts",
+            image: "{% static '/img/foods/almonds.jpg' %}" 
+        },
+        { 
+            name: "Broccoli (1 cup)", 
+            calories: 55, 
+            protein: 3.7, 
+            carbs: 11.2, 
+            category: "vegetable",
+            image: "{% static '/img/foods/broccoli.jpg' %}" 
+        },
+        { 
+            name: "Salmon (4 oz)", 
+            calories: 233, 
+            protein: 25, 
+            carbs: 0, 
+            category: "protein",
+            image: "{% static '/img/foods/salmon.jpg' %}" 
+        },
+        { 
+            name: "Greek Yogurt (1 cup)", 
+            calories: 130, 
+            protein: 22, 
+            carbs: 9, 
+            category: "dairy",
+            image: "{% static '/img/foods/greek-yogurt.jpg' %}" 
+        },
+        { 
+            name: "Avocado (half)", 
+            calories: 160, 
+            protein: 2, 
+            carbs: 8.5, 
+            category: "fruit",
+            image: "{% static '/img/foods/avocado.jpg' %}" 
+        },
+        { 
+            name: "Sweet Potato (medium)", 
+            calories: 103, 
+            protein: 2, 
+            carbs: 24, 
+            category: "vegetable",
+            image: "{% static '/img/foods/sweet-potato.jpg' %}" 
+        },
+        { 
+            name: "Chocolate Chip Cookie", 
+            calories: 148, 
+            protein: 1.5, 
+            carbs: 19, 
+            category: "sweet",
+            image: "{% static '/img/foods/chocolate-chip-cookie.jpg' %}" 
+        },
+        { 
+            name: "Muffin", 
+            calories: 210, 
+            protein: 3, 
+            carbs: 42, 
+            category: "sweet",
+            image: "{% static '/img/foods/muffin.jpg' %}" 
+        },
+        { 
+            name: "Salad (mixed greens)", 
+            calories: 15, 
+            protein: 1, 
+            carbs: 3, 
+            category: "vegetable",
+            image: "{% static '/img/foods/salad.jpg' %}" 
+        },
+        { 
+            name: "Quinoa (1 cup)", 
+            calories: 222, 
+            protein: 8, 
+            carbs: 39, 
+            category: "grain",
+            image: "{% static '/img/foods/quinoa.jpg' %}" 
+        }
+    ];
+
+    // Function to properly initialize all calorie values
+    function initializeCalorieValues() {
+        dailyCalories = parseFloat(document.getElementById("dailyCalories").textContent) || 0;
+        remainingCalories = dailyCalories - consumedCalories;
+        if (remainingCalories < 0) remainingCalories = 0;
+        updateProgress();
+    }
+
+    // Modified loadPersistedData function with user-specific keys
+    function loadPersistedData() {
+        const isNewDay = checkForNewDay();
+        
+        if (!isNewDay) {
+            const savedData = localStorage.getItem(getUserStorageKey('consumptionData'));
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                consumedCalories = parsedData.consumedCalories || 0;
+                // Don't load remainingCalories from storage, calculate fresh
+                consumptionHistory = parsedData.consumptionHistory || [];
+                lastEatenFood = parsedData.lastEatenFood || "";
+                
+                // Initialize with fresh calculations
+                initializeCalorieValues();
+                updateConsumptionHistory();
+                generateRecommendations(false);
+            } else {
+                // First visit today, initialize fresh
+                initializeCalorieValues();
+            }
+        } else {
+            // New day, initialize fresh
+            initializeCalorieValues();
+        }
+    }
+
+    // Save data to localStorage with user-specific key
+    function persistData() {
+        const dataToSave = {
+            consumedCalories,
+            remainingCalories,
+            consumptionHistory,
+            lastEatenFood,
+            saveTime: new Date().getTime()
+        };
+        localStorage.setItem(getUserStorageKey('consumptionData'), JSON.stringify(dataToSave));
+    }
+
+    // Modified checkForNewDay function with user-specific keys
+    function checkForNewDay() {
+        const today = new Date().toDateString();
+        const lastVisitDate = localStorage.getItem(getUserStorageKey('lastVisitDate'));
+        
+        if (!lastVisitDate || lastVisitDate !== today) {
+            localStorage.setItem(getUserStorageKey('lastVisitDate'), today);
+            localStorage.removeItem(getUserStorageKey('consumptionData'));
+            return true;
+        }
+        return false;
+    }
+
+    // Modified setupMidnightReset function with user-specific keys
+    function setupMidnightReset() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const timeUntilMidnight = midnight - now;
+        
+        setTimeout(() => {
+            localStorage.removeItem(getUserStorageKey('consumptionData'));
+            location.reload(); // Refresh the page at midnight
+        }, timeUntilMidnight);
+    }
+
+    // Modified refreshDailyCalories function
+    function refreshDailyCalories() {
+        const newDailyCalories = parseFloat(document.getElementById("dailyCalories").textContent) || 0;
+        const oldDailyCalories = dailyCalories;
+        dailyCalories = newDailyCalories;
+        
+        // Recalculate remaining calories based on new daily value and existing consumption
+        remainingCalories = dailyCalories - consumedCalories;
+        if (remainingCalories < 0) remainingCalories = 0;
+        
+        updateProgress();
+        persistData();
+        
+        console.log(`Calories refreshed. Old: ${oldDailyCalories}, New: ${dailyCalories}, Consumed: ${consumedCalories}, Remaining: ${remainingCalories}`);
+    }
+
+    // Update progress circle
+    function updateProgress() {
+        const progressPercent = Math.min(Math.round((consumedCalories / dailyCalories) * 100), 100);
+        const progressCircle = document.getElementById("progressCircle");
+        const circumference = 2 * Math.PI * 45;
+        const offset = circumference - (progressPercent / 100) * circumference;
+        
+        progressCircle.style.strokeDashoffset = offset;
+        document.getElementById("progressPercent").textContent = progressPercent;
+        document.getElementById("consumedCalories").textContent = consumedCalories.toFixed(1);
+        document.getElementById("remainingCalories").textContent = remainingCalories.toFixed(1);
+        
+        // Show alert if calories limit reached and alert hasn't been shown yet
+        if (consumedCalories >= dailyCalories && !alertShown) {
+            showCaloriesAlert();
+            alertShown = true;
+        }
+    }
+    
+    function showCaloriesAlert() {
+        document.getElementById("caloriesOverlay").style.display = "block";
+        document.getElementById("caloriesAlert").style.display = "block";
+    }
+    
+    function closeCaloriesAlert() {
+        document.getElementById("caloriesOverlay").style.display = "none";
+        document.getElementById("caloriesAlert").style.display = "none";
+    }
+    
+    // Handle image error by using a fallback image
+    function handleImageError(img) {
+        img.onerror = null; // Prevent infinite loop
+        img.src = "{% static '/img/foods/default-food.jpg' %}"; // Default fallback image
+    }
+    
+    // Function to update consumption history table
+    function updateConsumptionHistory() {
+        const historyTable = document.getElementById("consumptionHistory");
+        historyTable.innerHTML = "";
+        
+        if (consumptionHistory.length === 0) {
+            historyTable.innerHTML = `<tr><td colspan="6" class="text-center">No food consumed yet today</td></tr>`;
+            return;
+        }
+        
+        consumptionHistory.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity || '1 serving'}</td>
+                <td>${item.calories}</td>
+                <td>${item.protein}g</td>
+                <td>${item.carbs}g</td>
+                <td>${new Date(item.timestamp).toLocaleTimeString()}</td>
+            `;
+            historyTable.appendChild(row);
+        });
+    }
+
+    // Function to add food to consumed list
+    function addFoodToConsumed(food) {
+        const now = new Date();
+        const foodEntry = {
+            ...food,
+            timestamp: now.getTime(),
+            quantity: food.quantity || '1 serving'
+        };
+        
+        consumptionHistory.push(foodEntry);
+        consumedCalories += food.calories;
+        remainingCalories = Math.max(dailyCalories - consumedCalories, 0);
+        lastEatenFood = food.name;
+        
+        updateProgress();
+        updateConsumptionHistory();
+        generateRecommendations(true); // Show recommendations after adding food
+        persistData(); // Save to localStorage
+    }
+    
+    // Generate food recommendations based on remaining calories and last eaten food
+    function generateRecommendations(showSection = false) {
+        const recommendationsContainer = document.getElementById("recommendationsContainer");
+        const recommendationsSection = document.getElementById("recommendationsSection");
+        
+        // Only show recommendations if there are remaining calories and we want to show the section
+        if (remainingCalories <= 0 || !showSection) {
+            recommendationsSection.style.display = "none";
+            return;
+        }
+        
+        recommendationsSection.style.display = "block";
+        recommendationsContainer.innerHTML = "";
+        
+        // Determine food category balance
+        let needProtein = true;
+        let needVegetables = true;
+        let allowSweets = true;
+        
+        // Check if last eaten food was a sweet
+        if (lastEatenFood.toLowerCase().includes("cookie") || 
+            lastEatenFood.toLowerCase().includes("cake") || 
+            lastEatenFood.toLowerCase().includes("sweet") || 
+            lastEatenFood.toLowerCase().includes("chocolate") ||
+            lastEatenFood.toLowerCase().includes("muffin")) {
+            allowSweets = false;
+        }
+        
+        // Filter foods based on remaining calories
+        let suitableFoods = foodNutritionData.filter(food => food.calories <= remainingCalories);
+        
+        // Prioritize based on nutritional needs
+        let recommendedFoods = [];
+        
+        if (!allowSweets) {
+            // Remove sweets from recommendations if user just ate a sweet
+            suitableFoods = suitableFoods.filter(food => food.category !== "sweet");
+        }
+        
+        // Get protein sources if needed
+        if (needProtein) {
+            const proteinFoods = suitableFoods.filter(food => food.category === "protein" || food.protein > 5);
+            if (proteinFoods.length > 0) {
+                recommendedFoods.push({
+                    ...proteinFoods[Math.floor(Math.random() * proteinFoods.length)],
+                    reason: "Good source of protein to help meet your daily needs."
+                });
+            }
+        }
+        
+        // Get vegetable sources if needed
+        if (needVegetables) {
+            const vegFoods = suitableFoods.filter(food => food.category === "vegetable");
+            if (vegFoods.length > 0) {
+                recommendedFoods.push({
+                    ...vegFoods[Math.floor(Math.random() * vegFoods.length)],
+                    reason: "Add vegetables to balance your meal and get essential nutrients."
+                });
+            }
+        }
+        
+        // Add some variety with other food types
+        const otherCategories = ["fruit", "grain", "dairy", "nuts"];
+        const randomCategory = otherCategories[Math.floor(Math.random() * otherCategories.length)];
+        const otherFoods = suitableFoods.filter(food => food.category === randomCategory);
+        
+        if (otherFoods.length > 0) {
+            recommendedFoods.push({
+                ...otherFoods[Math.floor(Math.random() * otherFoods.length)],
+                reason: `A good way to add variety to your diet with a ${randomCategory}.`
+            });
+        }
+        
+        // If we still don't have enough recommendations, add some random foods
+        if (recommendedFoods.length < 3 && suitableFoods.length > 0) {
+            const remainingOptions = suitableFoods.filter(food => 
+                !recommendedFoods.some(rec => rec.name === food.name)
+            );
+            
+            if (remainingOptions.length > 0) {
+                const randomFood = remainingOptions[Math.floor(Math.random() * remainingOptions.length)];
+                recommendedFoods.push({
+                    ...randomFood,
+                    reason: `Fits within your remaining calorie goal for the day.`
+                });
+            }
+        }
+        
+        // Create recommendation cards
+        recommendedFoods.forEach(food => {
+            const recommendationCard = document.createElement("div");
+            recommendationCard.className = "recommendation-card";
+            recommendationCard.innerHTML = `
+                <img src="${food.image}" alt="${food.name}" class="recommendation-img" onerror="handleImageError(this)">
+                <div class="recommendation-info">
+                    <h5>${food.name}</h5>
+                    <div>
+                        <span class="nutrient-tag calories-tag">${food.calories} kcal</span>
+                        <span class="nutrient-tag protein-tag">${food.protein}g protein</span>
+                        <span class="nutrient-tag carbs-tag">${food.carbs}g carbs</span>
+                    </div>
+                    <p class="recommendation-reason">${food.reason}</p>
+                </div>
+            `;
+            recommendationsContainer.appendChild(recommendationCard);
+        });
+    }
+    
+    // Initialize the page
+    function initializePage() {
+        loadPersistedData();
+        setupMidnightReset();
+        updateProgress();
+        updateConsumptionHistory();
+        generateRecommendations(false);
+        
+        // Add event listener for profile updates
+        window.addEventListener('focus', function() {
+            refreshDailyCalories();
+        });
+        
+        window.addEventListener('beforeunload', persistData);
+    }
+
+    // Call initialization
+    initializePage();
+
+    // Add this to help debug - shows current values in console
+    setInterval(function() {
+        console.log(`Current values - Daily: ${dailyCalories}, Consumed: ${consumedCalories}, Remaining: ${remainingCalories}`);
+    }, 5000);
+
+    document.getElementById("uploadForm").onsubmit = async function(event) {
+        event.preventDefault();
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Uploading...";
+
+        try {
+            let formData = new FormData();
+            formData.append("food_image", document.getElementById("foodImage").files[0]);
+
+            let response = await fetch("{% url 'upload_image' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                }
+            });
+
+            let result = await response.json();
+            if (result.success) {
+                document.getElementById("uploadedImage").innerHTML = `
+                    <p>Image Uploaded Successfully!</p>
+                    <img src="${result.image_url}" alt="Uploaded Food Image" class="img-fluid rounded shadow-sm" style="max-width: 300px;">`;
+
+                document.getElementById("predictionBox").style.display = "block";
+                document.getElementById("foodItem").innerText = "Food Item: " + result.food_item;
+                document.getElementById("quantity").innerText = "Serving Size: " + result.quantity;
+                document.getElementById("calories").innerText = "Calories: " + result.calories;
+                document.getElementById("protein").innerText = "Protein: " + result.protein + "g";
+                document.getElementById("carbs").innerText = "Carbs: " + result.carbs + "g";
+
+                // Create food entry
+                const foodEntry = {
+                    name: result.food_item,
+                    calories: parseFloat(result.calories),
+                    protein: parseFloat(result.protein),
+                    carbs: parseFloat(result.carbs),
+                    quantity: result.quantity
+                };
+
+                // Add to consumption history (this now uses the persistent version)
+                addFoodToConsumed(foodEntry);
+            } else {
+                alert("Failed to upload image: " + result.error);
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Upload Image";
+        }
+    };
+    </script>
+</body>
+</html>

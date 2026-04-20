@@ -1,0 +1,55 @@
+{% extends "update_profile.html" %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <h2>Update Your Profile</h2>
+    
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="text" class="form-control" value="{{ user_info.email }}" readonly>
+        </div>
+        
+        <div class="form-group">
+            <label>Age:</label>
+            <input type="number" name="age" class="form-control" value="{{ user_info.age }}" min="10" max="120" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Height (cm):</label>
+            <input type="number" name="height" class="form-control" value="{{ user_info.height }}" min="100" max="250" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Weight (kg):</label>
+            <input type="number" name="weight" class="form-control" value="{{ user_info.weight }}" min="30" max="300" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Gender:</label>
+            <select name="gender" class="form-control" required>
+                <option value="male" {% if user_info.gender == 'male' %}selected{% endif %}>Male</option>
+                <option value="female" {% if user_info.gender == 'female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Activity Level:</label>
+            <select name="activity" class="form-control" required>
+                <option value="sedentary" {% if user_info.activity == 'sedentary' %}selected{% endif %}>Sedentary</option>
+                <option value="light" {% if user_info.activity == 'light' %}selected{% endif %}>Light</option>
+                <option value="moderate" {% if user_info.activity == 'moderate' %}selected{% endif %}>Moderate</option>
+                <option value="active" {% if user_info.activity == 'active' %}selected{% endif %}>Active</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+</div>
+{% endblock %}

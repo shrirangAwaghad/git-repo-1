@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Food Image</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<h1>Upload Food Image</h1>
+
+<form action="{% url 'predict_calories' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="food_image">Select an image:</label>
+    <input type="file" name="food_image" id="food_image" required>
+    <br><br>
+    <button type="submit">Predict Calories</button>
+</form>
+
+</body>
+</html>
