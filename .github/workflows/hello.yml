@@ -4,53 +4,58 @@ on:
   push:
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install Dependencies
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Debug Environment
-        run: |
-          echo "Current directory:"
-          pwd
-
-          echo ""
-          echo "Repository files:"
-          ls -R
-
-          echo ""
-          echo "Python version:"
-          python --version
-
-          echo ""
-          echo "Python search path:"
-          python -c "import sys; print('\n'.join(sys.path))"
-
-          echo ""
-          echo "Try importing calculator:"
-          python -c "import calculator; print(calculator)"
-
-      - name: Run Tests with Coverage
+      - name: Run Tests
         run: |
           python -m pytest \
             --cov=. \
             --cov-report=term-missing \
             -v
 
-      - name: Check Code Formatting
+  formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check Formatting
         run: black --check .
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Ruff
         run: ruff check .
