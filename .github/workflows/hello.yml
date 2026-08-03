@@ -21,11 +21,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Debug Repository
+      - name: Debug Environment
         run: |
+          echo "Current directory:"
           pwd
+
+          echo ""
+          echo "Repository files:"
           ls -R
+
+          echo ""
+          echo "Python version:"
           python --version
 
+          echo ""
+          echo "Python search path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+
+          echo ""
+          echo "Try importing calculator:"
+          python -c "import calculator; print(calculator)"
+
       - name: Run Tests
-        run: pytest -v
+        run: python -m pytest -v
