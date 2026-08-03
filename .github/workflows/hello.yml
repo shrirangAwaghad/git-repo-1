@@ -47,3 +47,6 @@ jobs:
 
       - name: Check Code Formatting
         run: black --check .
+
+      - name: Run Ruff
+        run: ruff check .
