@@ -44,3 +44,6 @@ jobs:
 
       - name: Run Tests
         run: python -m pytest -v
+
+      - name: Check Code Formatting
+        run: black --check .
