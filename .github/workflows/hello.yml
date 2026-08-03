@@ -21,5 +21,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Debug Repository
+        run: |
+          pwd
+          ls -R
+          python --version
+
       - name: Run Tests
-        run: pytest
+        run: pytest -v
