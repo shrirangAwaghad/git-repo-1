@@ -16,5 +16,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Show Python Version
+        run: python --version
+
+      - name: Show Current Directory
+        run: pwd
+
+      - name: List Repository Files
+        run: ls -la
+
       - name: Run Python Program
         run: python app.py
