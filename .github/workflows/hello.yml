@@ -55,26 +55,26 @@ jobs:
         run: ruff check .
 
   test:
-    name: Run Tests & Coverage
+    name: Test on Python ${{ matrix.python-version }}
     needs: lint
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Tests with Coverage
-        run: |
+      - run: |
           python -m pytest \
             --cov=. \
             --cov-report=term-missing \
