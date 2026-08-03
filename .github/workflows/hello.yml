@@ -42,8 +42,12 @@ jobs:
           echo "Try importing calculator:"
           python -c "import calculator; print(calculator)"
 
-      - name: Run Tests
-        run: python -m pytest -v
+      - name: Run Tests with Coverage
+        run: |
+          python -m pytest \
+            --cov=. \
+            --cov-report=term-missing \
+            -v
 
       - name: Check Code Formatting
         run: black --check .
